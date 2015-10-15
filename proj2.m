@@ -39,40 +39,32 @@ d = size(trainingX, 2);
 % model complexity
 M1 = 10;
 
-% % find the clusters for the datapoints
-% fprintf('Finding %d clusters ...\n', M1 );
-% [idx, C] = kmeans(trainingX, M1);
-% 
-% % centres for the basis functions D X M
-% % we assign centroids of the clusters to muj
-% mu1 = C;
+% find the clusters for the datapoints
+fprintf('Finding %d clusters ...\n', M1 );
+[idx, C] = kmeans(trainingX, M1);
 
 % centres for the basis functions D X M
-mu1 = ones(d, M1);
-
-% pick five random points as centres, in this case samples numbered 11 to 11+M1
-for i = 1 : M1
-    mu1(:,i) = trainingX(i + 10,:)';
-end
-
+% we assign centroids of the clusters to muj
+mu1 = C;
 
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
-sig = zeros(d,d);
-for i = 1 : d
-    for j = 1 : d
-        if i == j
-            sig(i,j) = variance(i) / 10;
+cluster_variance = [];
+for i = 1 : M1
+    temp = [];
+    for j = 1 : length(idx)
+        if j == i
+            temp = [temp; trainingX(j,:)];
         end
     end
+    cluster_variance = [cluster_variance; var(temp)];
 end
-siginv = pinv(sig);
-% siginv = pinv(cov(trainingX) * eye(d));
 
 % determine design matrix N X M
 fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M1);
 phi = ones(n, M1); 
 for j = 2 : M1
+    siginv = pinv(cluster_variance(j)' * eye(d));
     for i = 1 : n
         temp = trainingX(i,:)' - mu1(j);
         phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
