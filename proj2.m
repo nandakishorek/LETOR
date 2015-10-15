@@ -37,7 +37,7 @@ d = size(trainingX, 2);
 % histogram(trainingX(:,2));
 
 % model complexity
-M1 = 10;
+M1 = 30;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M1 );
@@ -72,7 +72,7 @@ for j = 2 : M1
 end
 
 % regularization coefficient
-lambda = 100;
+lambda = 0;
 
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
@@ -80,6 +80,9 @@ w1 = pinv((lambda * eye(M1)) + phi' * phi) * phi' * trainingT;
 
 % sum of squares error
 error1 = (sum((trainingT - (phi * w1)) .^ 2) / 2) + (lambda * w1' * w1 / 2)
+
+% root mean square error
+erms1 = sqrt(2 * error1 / n)
 
 y = phi * w1;
 xaxis = linspace(0, length(y), length(y));
