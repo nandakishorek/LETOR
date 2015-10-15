@@ -36,9 +36,6 @@ d = size(trainingX, 2);
 % figure(2)
 % histogram(trainingX(:,2));
 
-% calculate vaiance for the training set
-variance = var(trainingX);
-
 % model complexity
 M1 = 10;
 
