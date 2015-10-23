@@ -35,7 +35,7 @@ n2 = size(trainingX2, 1);
 d2 = size(trainingX2, 2);
 
 % model complexity
-M2 = 20;
+M2 = 55;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M2);
@@ -70,31 +70,23 @@ end
 
 phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
+% regularization coefficient
+lambda2 = 0;
+
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
-w2 = pinv(phi2' * phi2) * phi2' * trainingT2;
+w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
 
-% sum of squares error for the training set
-error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2;
+% sum of squares error and erms for the training set
+[errorTest, trainPer2] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2)
 
-% root mean square error for the training set
-trainPer2 = sqrt(2 * error2 / n2)
-
-% validation set design matrix
+% validation set
 phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
+[errorVal, validPer2] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2);
 
-% sum of squares error for the validation set
-errorVal = sum((validationT2 - (phiValid * w2)) .^ 2) / 2;
-
-% root mean square error for the validation set
-validPer2 = sqrt(2 * errorVal / size(validationX2, 1))
-
-
-% testing set design matrix
+% testing set
 phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
-
-% sum of squares error and erms for testing set
-[errorTest, testPer2] = calculateError(phiTest, testingT2, w2, size(testingX2, 1))
+[errorTest, testPer2] = calculateError(phiTest, testingT2, w2, size(testingX2, 1), lambda2);
 
 
 figure(2)
@@ -102,7 +94,7 @@ y2 = phi2 * w2;
 xaxis = linspace(0, length(y2), length(y2));
 plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
 
-save('proj2_synth');
+save('proj2_synth.mat');
 end
 
 
@@ -124,10 +116,10 @@ end
 
 end
 
-function [err, erms] = calculateError(phi, t, w, n)
+function [err, erms] = calculateError(phi, t, w, n, lambda)
 
 % sum of squares error
-err = sum((t - (phi * w)) .^ 2) / 2;
+err = sum((t - (phi * w)) .^ 2) / 2 + (lambda * (w' * w) / 2);
 
 % root mean square error
 erms = sqrt(2 * err / n);
