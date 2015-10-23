@@ -34,7 +34,7 @@ n2 = size(trainingX2, 1);
 d2 = size(trainingX2, 2);
 
 % model complexity
-M2 = 80;
+M2 = 18;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M2);
@@ -79,7 +79,7 @@ error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2;
 % root mean square error
 erms = sqrt(2 * error2 / n2)
 
-figure(2)
-y2 = phi2 * w2;
-xaxis = linspace(0, length(y2), length(y2));
-plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
+% figure(2)
+% y2 = phi2 * w2;
+% xaxis = linspace(0, length(y2), length(y2));
+% plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
