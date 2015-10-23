@@ -76,7 +76,6 @@ for j = 2 : M1
     end
 end
 
-size(Sigma1)
 % regularization coefficient
 lambda = 0;
 
