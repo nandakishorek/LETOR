@@ -51,13 +51,14 @@ mu1 = C;
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
 cluster_variance = zeros(M1,1);
 for i = 1 : M1
-    temp = [];
-    for j = 1 : length(idx)
-        if j == i
-            temp = [temp; trainingX(j,:)];
-        end
-    end
-    cluster_variance(i,1) = var(temp);
+%     temp = [];
+%     for j = 1 : length(idx)
+%         if j == i
+%             temp = [temp; trainingX(j,:)];
+%         end
+%     end
+%     cluster_variance(i,1) = var(temp);
+    cluster_variance(i,1) = 1;
 end
 
 % the sigmaj for the basis functions
@@ -65,13 +66,13 @@ Sigma1 = zeros(d,d,M1);
 
 % determine design matrix N X M
 fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M1);
-phi = ones(n, M1); 
+phi = ones(n, M1);
 for j = 2 : M1
     Sigma1(:,:,j) = cluster_variance(j)' * eye(d);
     siginv = inv(Sigma1(:,:,j));
     for i = 1 : n
         temp = trainingX(i,:)' - mu1(j);
-        phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
+        phi(i,j) = exp(-1 / 2 * (temp' * siginv * temp) );
     end
 end
 
