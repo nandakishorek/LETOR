@@ -78,11 +78,11 @@ lambda = 0;
 fprintf('Finding the closed form solution ...\n');
 w1 = pinv((lambda * eye(M1)) + phi' * phi) * phi' * trainingT;
 
-% sum of squares error
+% sum of squares error for training set
 error1 = (sum((trainingT - (phi * w1)) .^ 2) / 2) + (lambda * w1' * w1 / 2)
 
-% root mean square error
-erms1 = sqrt(2 * error1 / n)
+% root mean square error for training set
+trainPer1 = sqrt(2 * error1 / n)
 
 y = phi * w1;
 xaxis = linspace(0, length(y), length(y));
