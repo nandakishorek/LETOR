@@ -38,7 +38,7 @@ for M1 = 1 : total
     
     % spread for the Gaussian radial functions
     fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
-    cluster_variance = [];
+    cluster_variance = zeros(M1,1);
     for i = 1 : M1
         temp = [];
         for j = 1 : length(idx)
@@ -46,7 +46,7 @@ for M1 = 1 : total
                 temp = [temp; trainingX(j,:)];
             end
         end
-        cluster_variance = [cluster_variance; var(temp)];
+        cluster_variance(i,1) = var(temp);
     end
     
     % determine design matrix N X M
