@@ -73,11 +73,11 @@ end
 fprintf('Finding the closed form solution ...\n');
 w2 = pinv(phi2' * phi2) * phi2' * trainingT2;
 
-% sum of squares error
+% sum of squares error for the training set
 error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2;
 
-% root mean square error
-erms = sqrt(2 * error2 / n2)
+% root mean square error for the training set
+trainPer2 = sqrt(2 * error2 / n2)
 
 % figure(2)
 % y2 = phi2 * w2;
