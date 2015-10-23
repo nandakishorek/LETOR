@@ -48,7 +48,7 @@ mu2 = C2;
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
 
-cluster_variance = [];
+cluster_variance = zeros(M2,1);
 for i = 1 : M2
     temp = [];
     for j = 1 : length(idx2)
@@ -56,7 +56,7 @@ for i = 1 : M2
             temp = [temp; trainingX2(j,:)];
         end
     end
-    cluster_variance = [cluster_variance; var(temp)];
+    cluster_variance(i,1) = var(temp);
 end
 
 % the sigmaj for the basis functions
@@ -97,10 +97,10 @@ phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
 [errorTest, testPer2] = calculateError(phiTest, testingT2, w2, size(testingX2, 1))
 
 
-% figure(2)
-% y2 = phi2 * w2;
-% xaxis = linspace(0, length(y2), length(y2));
-% plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
+figure(2)
+y2 = phi2 * w2;
+xaxis = linspace(0, length(y2), length(y2));
+plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
 
 save('proj2_synth');
 end
