@@ -117,7 +117,7 @@ Phi = ones(n, M);
 for j = 2 : M
     for i = 1 : n
         temp = X(i,:)' - mu(j);
-        siginv = pinv(Sigma(:,:,j));
+        siginv = inv(Sigma(:,:,j));
         Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
     end
 end
