@@ -57,7 +57,7 @@ Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
-w1 = pinv(Phi2' * Phi1) * Phi1' * trainingT1;
+w1 = pinv(Phi1' * Phi1) * Phi1' * trainingT1;
 w2 = pinv(Phi2' * Phi2) * Phi2' * trainingT2;
 
 % training error
@@ -67,8 +67,8 @@ w2 = pinv(Phi2' * Phi2) * Phi2' * trainingT2;
 % validation
 phiValid1 = calculatePhi(validationX1, M1, Sigma1, mu1);
 phiValid2 = calculatePhi(validationX2, M2, Sigma2, mu2);
-[errorVal1, validPer1] = calculateError(phiValid, validationT1, w1, size(validationX1, 1))
-[errorVal2, validPer2] = calculateError(phiValid, validationT2, w2, size(validationX2, 1))
+[errorVal1, validPer1] = calculateError(phiValid1, validationT1, w1, size(validationX1, 1))
+[errorVal2, validPer2] = calculateError(phiValid2, validationT2, w2, size(validationX2, 1))
 
 % test
 phiTest1 = calculatePhi(testingX1, M1, Sigma1, mu1);
