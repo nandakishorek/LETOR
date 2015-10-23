@@ -60,17 +60,23 @@ for i = 1 : M1
     cluster_variance = [cluster_variance; var(temp)];
 end
 
+% the sigmaj for the basis functions
+Sigma1 = zeros(d,d,M1);
+
 % determine design matrix N X M
 fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M1);
 phi = ones(n, M1); 
 for j = 2 : M1
-    siginv = pinv(cluster_variance(j)' * eye(d));
+    sigmaJ = cluster_variance(j)' * eye(d);
+    Sigma1(:,:,j) = sigmaJ;
+    siginv = pinv(sigmaJ);
     for i = 1 : n
         temp = trainingX(i,:)' - mu1(j);
         phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
     end
 end
 
+size(Sigma1)
 % regularization coefficient
 lambda = 0;
 
