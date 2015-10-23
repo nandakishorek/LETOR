@@ -37,7 +37,7 @@ d = size(trainingX, 2);
 % histogram(trainingX(:,2));
 
 % model complexity
-M1 = 30;
+M1 = 44;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M1 );
@@ -84,6 +84,8 @@ error1 = (sum((trainingT - (phi * w1)) .^ 2) / 2) + (lambda * w1' * w1 / 2)
 % root mean square error for training set
 trainPer1 = sqrt(2 * error1 / n)
 
-y = phi * w1;
-xaxis = linspace(0, length(y), length(y));
-plot(xaxis, trainingT, 'g', xaxis, y, 'r');
+% y = phi * w1;
+% xaxis = linspace(0, length(y), length(y));
+% plot(xaxis, trainingT, 'g', xaxis, y, 'r');
+
+save('proj2_real.mat');
