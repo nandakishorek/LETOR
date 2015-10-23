@@ -57,7 +57,7 @@ testInd2 = testInd2';
 
 % model complexity
 M1 = 44;
-M2 = 20;
+M2 = 55;
 
 % calculate sigma for both the datasets
 [Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
@@ -141,18 +141,21 @@ fprintf('Finding %d clusters ...\n', M);
 % we assign centroids of the clusters to muj
 mu = C;
 
+% mu = datasample(X, M);
+
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
 
 cluster_variance = zeros(M,1);
 for i = 1 : M
-%     temp = [];
-%     for j = 1 : length(idx)
-%         if j == i
-%             temp = [temp; X(j,:)];
-%         end
-%     end
-    cluster_variance(i,1) = 1;
+    temp = [];
+    for j = 1 : length(idx)
+        if j == i
+            temp = [temp; X(j,:)];
+        end
+    end
+    cluster_variance(i,:) = var(temp);
+%     cluster_variance(i,1) = 1;
 end
 
 % the sigmaj for the basis functions
