@@ -105,7 +105,7 @@ save('proj2.mat');
 end
 
 
-function Phi = calculatePhi(X, M, Sigma, mu, lambda)
+function Phi = calculatePhi(X, M, Sigma, mu)
 % number of training samples
 n = size(X, 1);
 
