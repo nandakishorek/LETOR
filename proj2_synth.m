@@ -56,7 +56,8 @@ for i = 1 : M2
             temp = [temp; trainingX2(j,:)];
         end
     end
-    cluster_variance(i,1) = var(temp);
+    cluster_variance(i,:) = var(temp);
+%     cluster_variance(i,1) = 0.5;
 end
 
 % the sigmaj for the basis functions
