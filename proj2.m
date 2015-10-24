@@ -146,7 +146,7 @@ mu = C;
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
 
-cluster_variance = zeros(M,1);
+cluster_variance = [];
 for i = 1 : M
     temp = [];
     for j = 1 : length(idx)
@@ -154,7 +154,7 @@ for i = 1 : M
             temp = [temp; X(j,:)];
         end
     end
-    cluster_variance(i,:) = var(temp);
+    cluster_variance = [cluster_variance; var(temp)];
 %     cluster_variance(i,1) = 1;
 end
 
@@ -162,7 +162,7 @@ end
 Sigma = zeros(d,d,M);
 for j = 2 : M
     for i = 1 : n
-        Sigma(:,:,j) = cluster_variance(j)' * eye(d);
+        Sigma(:,:,j) = cluster_variance(j,:)' * eye(d);
     end
 end
 end
