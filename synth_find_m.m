@@ -41,7 +41,7 @@ for M2 = 1 : total
     % spread for the Gaussian radial functions
     fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
     
-    cluster_variance = [];
+    cluster_variance = zeros(M2,1);
     for i = 1 : M2
         temp = [];
         for j = 1 : length(idx2)
@@ -49,7 +49,7 @@ for M2 = 1 : total
                 temp = [temp; trainingX2(j,:)];
             end
         end
-        cluster_variance = [cluster_variance; var(temp)];
+        cluster_variance(i,1) = var(temp);
     end
     
     % determine design matrix N X M
@@ -63,12 +63,15 @@ for M2 = 1 : total
         end
     end
     
+    % regularization coefficient
+    lambda2 = 0;
+
     % closed form solution for the weights
     fprintf('Finding the closed form solution ...\n');
-    w2 = pinv(phi2' * phi2) * phi2' * trainingT2;
+    w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
     
     % sum of squares error
-    error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2;
+    error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2 + (lambda2 * (w2' * w2) / 2);
     
     % root mean square error
     erms2(1, M2) = sqrt(2 * error2 / n2);
