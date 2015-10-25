@@ -2,6 +2,7 @@
 %% Nandakishore Krishna
 %% Person number : 50169797
 
+function [] = synth_find_m()
 clear; close all; clc;
 
 UBitName = 'Nanda Kishore Krishna';
@@ -19,6 +20,14 @@ x = x';
 trainingX2 = x(1:1600, :);
 trainingT2 = t(1:1600, 1);
 
+% validation set - 10 % dataset
+validationX2 = x(1601:1800, :);
+validationT2 = t(1601:1800, 1);
+
+% testing set - 10% of dataset
+testingX2 = x(1801:size(x,1), :);
+testingT2 = t(1801:size(t,1), 1);
+
 % number of training samples
 n2 = size(trainingX2, 1);
 
@@ -26,8 +35,10 @@ n2 = size(trainingX2, 1);
 d2 = size(trainingX2, 2);
 
 % total number of iterations
-total = 200;
-erms2 = zeros(1,total);
+total = 100;
+ermsTraining = zeros(1,total);
+ermsValidation = zeros(1,total);
+ermsTest = zeros(1,total);
 
 for M2 = 1 : total
     % find the clusters for the datapoints
@@ -41,7 +52,7 @@ for M2 = 1 : total
     % spread for the Gaussian radial functions
     fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
     
-    cluster_variance = zeros(M2,1);
+    cluster_variance = zeros(M2,d2);
     for i = 1 : M2
         temp = [];
         for j = 1 : length(idx2)
@@ -49,38 +60,76 @@ for M2 = 1 : total
                 temp = [temp; trainingX2(j,:)];
             end
         end
-        cluster_variance(i,1) = var(temp);
+        cluster_variance(i,:) = var(temp);
+        %     cluster_variance(i,:) = 1 * ones(1, d2);
+        %     cluster_variance(i,1) = 0.5;
     end
     
-    % determine design matrix N X M
-    fprintf('Calculating the design matrix phi of size %d X %d ...\n', n2, M2);
-    phi2 = ones(n2, M2);
+    % the sigmaj for the basis functions
+    Sigma2 = zeros(d2,d2,M2);
     for j = 2 : M2
-        siginv2 = pinv(cluster_variance(j)' * eye(d2));
         for i = 1 : n2
-            temp = trainingX2(i,:)' - mu2(j);
-            phi2(i,j) = exp(-1 * (temp' * siginv2 * temp) / 2);
+            Sigma2(:,:,j) = diag(cluster_variance(j,:));
         end
     end
     
+    
+    phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
+    
     % regularization coefficient
     lambda2 = 0;
-
+    
     % closed form solution for the weights
     fprintf('Finding the closed form solution ...\n');
     w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
     
-    % sum of squares error
-    error2 = sum((trainingT2 - (phi2 * w2)) .^ 2) / 2 + (lambda2 * (w2' * w2) / 2);
+    % sum of squares error and erms for the training set
+    [errorTest, ermsTraining(1,M2)] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2);
     
-    % root mean square error
-    erms2(1, M2) = sqrt(2 * error2 / n2);
+    % validation set
+    phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
+    [errorVal, ermsValidation(1,M2)] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2);
+    
+    % testing set
+    phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
+    [errorTest, ermsTest(1,M2)] = calculateError(phiTest, testingT2, w2, size(testingX2, 1), lambda2);
     
 end
 
 % plot M vs ERMS
 figure(2)
 xaxis = linspace(0, total - 1, total);
-plot(xaxis, erms2, 'r');
+plot(xaxis, ermsTraining, 'b', xaxis, ermsValidation, 'r', xaxis, ermsTest, 'g');
+legend('training','validation','testing')
 xlabel('M', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
+
+end
+
+function Phi = calculatePhi(X, M, Sigma, mu)
+
+% number of training samples
+n = size(X, 1);
+
+% determine design matrix N X M
+fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M);
+Phi = ones(n, M);
+for j = 2 : M
+    for i = 1 : n
+        temp = X(i,:)' - mu(j);
+        siginv = inv(Sigma(:,:,j));
+        Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
+    end
+end
+
+end
+
+function [err, erms] = calculateError(phi, t, w, n, lambda)
+
+% sum of squares error
+err = sum((t - (phi * w)) .^ 2) / 2 + (lambda * (w' * w) / 2);
+
+% root mean square error
+erms = sqrt(2 * err / n);
+
+end
