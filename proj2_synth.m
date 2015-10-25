@@ -86,7 +86,7 @@ fprintf('Finding the closed form solution ...\n');
 w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
 
 % sum of squares error and erms for the training set
-[errorTest, trainPer2] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2)
+[errorTrain, trainPer2] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2)
 
 % validation set
 phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
