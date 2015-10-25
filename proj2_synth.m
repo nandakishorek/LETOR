@@ -97,10 +97,36 @@ phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
 [errorTest2, testPer2] = calculateError(phiTest, testingT2, w2, size(testingX2, 1), lambda2);
 
 
-figure(2)
+% SGD
+% initial weights M X 1
+w02 = zeros(M2,1);
+
+% number of iterations for gradient descent - E
+numOfIters = 100;
+
+% learning rate 1 X E
+eta2 = 0.1 * ones(1, numOfIters);
+
+% gradients M X E
+dw2 = ones(M2, numOfIters);
+
+fprintf('Performing stochastic gradient descent ...\n');
+for i = 1 : numOfIters
+    for j = 1 : n2
+        dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
+        w02 = w02 + eta2(1,i) * dw2(:,i);
+    end
+end
+
+figure(3)
 y2 = phi2 * w2;
 xaxis = linspace(0, length(y2), length(y2));
 plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
+
+figure(4)
+y3 = phi2 * w02;
+xaxis = linspace(0, length(y3), length(y3));
+plot(xaxis, trainingT2, 'g', xaxis, y3, 'r');
 
 save('proj2_synth.mat');
 end
