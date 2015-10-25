@@ -26,10 +26,10 @@ testingX = Querylevelnorm(62662:end, 2:end);
 testingT = Querylevelnorm(62662:end, 1);
 
 % number of training samples
-n1 = size(trainingX1, 1);
+n1 = size(trainingX, 1);
 
 % no. of dimensions of the training set
-d1 = size(trainingX1, 2);
+d1 = size(trainingX, 2);
 
 % regularization coefficient
 lambda1 = linspace(0,1,11)';
