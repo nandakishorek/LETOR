@@ -42,42 +42,42 @@ ermsTest = zeros(1,total);
 
 M1 = 26;
 
+
+% find the clusters for the datapoints
+fprintf('Finding %d clusters ...\n', M1);
+[idx1, C1] = kmeans(trainingX, M1);
+
+% centres for the basis functions D X M
+% we assign centroids of the clusters to muj
+mu1 = C1';
+
+% spread for the Gaussian radial functions
+fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
+
+cluster_variance = zeros(M1,d1);
+for i = 1 : M1
+    temp = [];
+    for j = 1 : length(idx1)
+        if j == i
+            temp = [temp; trainingX(j,:)];
+        end
+    end
+    cluster_variance(i,:) = var(temp);
+    %     cluster_variance(i,:) = 1 * ones(1, d2);
+    %     cluster_variance(i,1) = 0.5;
+end
+
+% the sigmaj for the basis functions
+Sigma1 = zeros(d1,d1,M1);
+for j = 2 : M1
+    for i = 1 : n1
+        Sigma1(:,:,j) = diag(cluster_variance(j,:));
+    end
+end
+
+
+Phi1 = calculatePhi(trainingX, M1, Sigma1, mu1);
 for k = 1 : total
-    % find the clusters for the datapoints
-    fprintf('Finding %d clusters ...\n', M1);
-    [idx1, C1] = kmeans(trainingX, M1);
-    
-    % centres for the basis functions D X M
-    % we assign centroids of the clusters to muj
-    mu1 = C1';
-    
-    % spread for the Gaussian radial functions
-    fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
-    
-    cluster_variance = zeros(M1,d2);
-    for i = 1 : M1
-        temp = [];
-        for j = 1 : length(idx1)
-            if j == i
-                temp = [temp; trainingX(j,:)];
-            end
-        end
-        cluster_variance(i,:) = var(temp);
-        %     cluster_variance(i,:) = 1 * ones(1, d2);
-        %     cluster_variance(i,1) = 0.5;
-    end
-    
-    % the sigmaj for the basis functions
-    Sigma1 = zeros(d1,d1,M1);
-    for j = 2 : M1
-        for i = 1 : n1
-            Sigma1(:,:,j) = diag(cluster_variance(j,:));
-        end
-    end
-    
-    
-    Phi1 = calculatePhi(trainingX, M1, Sigma1, mu1);
-    
     % closed form solution for the weights
     fprintf('Finding the closed form solution ...\n');
     w1 = pinv((lambda1(k,1) * eye(M1)) + Phi1' * Phi1) * Phi1' * trainingT;
