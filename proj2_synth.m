@@ -34,8 +34,14 @@ n2 = size(trainingX2, 1);
 % no. of dimensions of the training set
 d2 = size(trainingX2, 2);
 
+% % histograms for the dataset
+% figure(1)
+% histogram(trainingX2(:,1));
+% figure(2)
+% histogram(trainingX2(:,2));
+
 % model complexity
-M2 = 55;
+M2 = 20;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M2);
@@ -48,7 +54,7 @@ mu2 = C2;
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
 
-cluster_variance = zeros(M2,1);
+cluster_variance = zeros(M2,d2);
 for i = 1 : M2
     temp = [];
     for j = 1 : length(idx2)
@@ -57,6 +63,7 @@ for i = 1 : M2
         end
     end
     cluster_variance(i,:) = var(temp);
+%     cluster_variance(i,:) = 1 * ones(1, d2);
 %     cluster_variance(i,1) = 0.5;
 end
 
@@ -64,7 +71,7 @@ end
 Sigma2 = zeros(d2,d2,M2);
 for j = 2 : M2
     for i = 1 : n2
-        Sigma2(:,:,j) = cluster_variance(j)' * eye(d2);
+        Sigma2(:,:,j) = diag(cluster_variance(j,:));
     end
 end
 
@@ -83,7 +90,7 @@ w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
 
 % validation set
 phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
-[errorVal, validPer2] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2);
+[errorVal, validPer2] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2)
 
 % testing set
 phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
