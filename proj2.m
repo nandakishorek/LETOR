@@ -63,9 +63,6 @@ M2 = 20;
 [Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
 [Sigma2, mu2] = calculateSigmaMu(trainingX2, M2);
 
-mu1 = mu1';
-mu2 = mu2';
-
 % calculate phi for both the datasets
 Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1');
 Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2');
@@ -84,14 +81,14 @@ w2 = pinv((lambda2 * eye(M2)) + Phi2' * Phi2) * Phi2' * trainingT2;
 [errorTrain2, trainPer2] = calculateError(Phi2, trainingT2, w2, size(trainingX2, 1), lambda2)
 
 % validation
-phiValid1 = calculatePhi(validationX1, M1, Sigma1, mu1');
-phiValid2 = calculatePhi(validationX2, M2, Sigma2, mu2');
+phiValid1 = calculatePhi(validationX1, M1, Sigma1, mu1);
+phiValid2 = calculatePhi(validationX2, M2, Sigma2, mu2);
 [errorVal1, validPer1] = calculateError(phiValid1, validationT1, w1, size(validationX1, 1), lambda1)
 [errorVal2, validPer2] = calculateError(phiValid2, validationT2, w2, size(validationX2, 1), lambda2)
 
 % test
-phiTest1 = calculatePhi(testingX1, M1, Sigma1, mu1');
-phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2');
+phiTest1 = calculatePhi(testingX1, M1, Sigma1, mu1);
+phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2);
 [errorTest1, testPer1] = calculateError(phiTest1, testingT1, w1, size(testingX1, 1), lambda1)
 [errorTest2, testPer2] = calculateError(phiTest2, testingT2, w2, size(testingX2, 1), lambda2)
 
@@ -115,7 +112,7 @@ Phi = ones(n, M);
 for j = 2 : M
     siginv = inv(Sigma(:,:,j));
     for i = 1 : n
-        temp = X(i,:)' - mu(j);
+        temp = X(i,:)' - mu(:,j);
         Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
     end
 end
@@ -139,7 +136,7 @@ fprintf('Finding %d clusters ...\n', M);
 
 % centres for the basis functions D X M
 % we assign centroids of the clusters to muj
-mu = C;
+mu = C';
 
 % mu = datasample(X, M);
 
