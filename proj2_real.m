@@ -96,9 +96,37 @@ phiValid = calculatePhi(validationX, M1, Sigma1, mu1);
 phiTest = calculatePhi(testingX, M1, Sigma1, mu1);
 [errorTest1, testPer2] = calculateError(phiTest, testingT, w1, size(testingX, 1), lambda1);
 
-y = Phi1 * w1;
-xaxis = linspace(0, length(y), length(y));
-plot(xaxis, trainingT, 'g', xaxis, y, 'r');
+figure(3)
+y2 = Phi1 * w1;
+xaxis = linspace(0, length(y2), length(y2));
+plot(xaxis, trainingT, 'g', xaxis, y2, 'r');
+
+
+% SGD
+% initial weights M X 1
+w01 = zeros(M1,1);
+
+% number of iterations for gradient descent - E
+numOfIters1 = 100;
+
+% learning rate 1 X E
+eta1 = 0.1 * ones(1, numOfIters1);
+
+% gradients M X E
+dw1 = ones(M1, numOfIters1);
+
+fprintf('Performing stochastic gradient descent ...\n');
+for i = 1 : numOfIters1
+    for j = 1 : n1
+        dw1(:,i) = (trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)';
+        w01 = w01 + eta1(1,i) * dw1(:,i);
+    end
+end
+
+figure(4)
+y2 = Phi1 * w01;
+xaxis = linspace(0, length(y2), length(y2));
+plot(xaxis, trainingT, 'g', xaxis, y2, 'r');
 
 save('proj2_real.mat');
 end
