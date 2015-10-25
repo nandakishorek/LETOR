@@ -84,15 +84,15 @@ for M2 = 1 : total
     w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
     
     % sum of squares error and erms for the training set
-    [errorTest, ermsTraining(1,M2)] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2);
+    [errorTrain2, ermsTraining(1,M2)] = calculateError(phi2, trainingT2, w2, size(trainingX2, 1), lambda2);
     
     % validation set
     phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
-    [errorVal, ermsValidation(1,M2)] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2);
+    [errorVal2, ermsValidation(1,M2)] = calculateError(phiValid, validationT2, w2, size(validationX2, 1), lambda2);
     
     % testing set
     phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
-    [errorTest, ermsTest(1,M2)] = calculateError(phiTest, testingT2, w2, size(testingX2, 1), lambda2);
+    [errorTest2, ermsTest(1,M2)] = calculateError(phiTest, testingT2, w2, size(testingX2, 1), lambda2);
     
 end
 
