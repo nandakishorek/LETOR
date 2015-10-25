@@ -56,8 +56,8 @@ testInd2 = 1801:size(x,1);
 testInd2 = testInd2';
 
 % model complexity
-M1 = 44;
-M2 = 55;
+M1 = 26;
+M2 = 20;
 
 % calculate sigma for both the datasets
 [Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
@@ -146,7 +146,7 @@ mu = C;
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
 
-cluster_variance = [];
+cluster_variance = zeros(M,d);
 for i = 1 : M
     temp = [];
     for j = 1 : length(idx)
@@ -154,15 +154,14 @@ for i = 1 : M
             temp = [temp; X(j,:)];
         end
     end
-    cluster_variance = [cluster_variance; var(temp)];
-%     cluster_variance(i,1) = 1;
+    cluster_variance(i,:) = var(temp);
 end
 
 % the sigmaj for the basis functions
 Sigma = zeros(d,d,M);
 for j = 2 : M
     for i = 1 : n
-        Sigma(:,:,j) = cluster_variance(j,:)' * eye(d);
+        Sigma(:,:,j) = diag(cluster_variance(j,:));
     end
 end
 end
