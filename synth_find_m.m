@@ -47,7 +47,7 @@ for M2 = 1 : total
     
     % centres for the basis functions D X M
     % we assign centroids of the clusters to muj
-    mu2 = C2;
+    mu2 = C2';
     
     % spread for the Gaussian radial functions
     fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
@@ -60,8 +60,8 @@ for M2 = 1 : total
                 temp = [temp; trainingX2(j,:)];
             end
         end
-        cluster_variance(i,:) = var(temp);
-        %     cluster_variance(i,:) = 1 * ones(1, d2);
+%         cluster_variance(i,:) = var(temp);
+        cluster_variance(i,:) = 1 * ones(1, d2);
         %     cluster_variance(i,1) = 0.5;
     end
     
@@ -104,6 +104,7 @@ legend('training','validation','testing')
 xlabel('M', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 
+save('synth_find_m.mat');
 end
 
 function Phi = calculatePhi(X, M, Sigma, mu)
@@ -116,7 +117,7 @@ fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M);
 Phi = ones(n, M);
 for j = 2 : M
     for i = 1 : n
-        temp = X(i,:)' - mu(j);
+        temp = X(i,:)' - mu(:,j);
         siginv = inv(Sigma(:,:,j));
         Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
     end
