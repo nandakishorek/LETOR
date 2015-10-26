@@ -43,7 +43,7 @@ ermsTraining = zeros(1,total);
 ermsValidation = zeros(1,total);
 ermsTest = zeros(1,total);
 
-M2 = 20;
+M2 = 60;
 
 for k = 1 : total
     % find the clusters for the datapoints
