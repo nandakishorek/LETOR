@@ -3,7 +3,6 @@
 %% Person number : 50169797
 function [] = real_find_m()
 
-rng default %
 clear; close all; clc;
 
 UBitName = 'Nanda Kishore Krishna';
@@ -39,6 +38,9 @@ ermsValidation1 = zeros(1,total);
 ermsTest1 = zeros(1,total);
 
 for M1 = 1 : total
+    
+    % reset random number generator so that the output of kmeans is deterministic
+    rng default %
     
     % find the clusters for the datapoints
     fprintf('Finding %d clusters ...\n', M1 );

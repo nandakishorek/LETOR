@@ -44,7 +44,7 @@ d1 = size(trainingX, 2);
 % histogram(trainingX(:,2));
 
 % model complexity
-M1 = 26;
+M1 = 55;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M1 );
@@ -79,7 +79,7 @@ end
 Phi1 = calculatePhi(trainingX, M1, Sigma1, mu1);
 
 % regularization coefficient
-lambda1 = 0;
+lambda1 = 0.2;
 
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
@@ -118,8 +118,8 @@ dw1 = ones(M1, numOfIters1);
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters1
     for j = 1 : n1
-        dw1(:,i) = (trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)';
-        w01 = w01 + eta1(1,i) * dw1(:,i);
+        dw1(:,i) = eta1(1,i) * ((trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)' + lambda * w01);
+        w01 = w01 + dw1(:,i);
     end
 end
 
