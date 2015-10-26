@@ -57,15 +57,15 @@ testInd2 = testInd2';
 
 % model complexity
 M1 = 26;
-M2 = 20;
+M2 = 60;
 
 % calculate sigma for both the datasets
 [Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
 [Sigma2, mu2] = calculateSigmaMu(trainingX2, M2);
 
 % calculate phi for both the datasets
-Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1');
-Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2');
+Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1);
+Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
 % regularization coefficients
 lambda1 = 0;
@@ -97,6 +97,50 @@ phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2);
 % y2 = Phi2 * w2;
 % xaxis = linspace(0, length(y2), length(y2));
 % plot(xaxis, trainingT2, 'g', xaxis, y2, 'r');
+
+
+% SGD
+% initial weights M X 1
+w01 = zeros(M1,1);
+
+% number of iterations for gradient descent - E
+numOfIters1 = 100;
+
+% learning rate 1 X E
+eta1 = 0.3 * ones(1, numOfIters1);
+
+% gradients M X E
+dw1 = ones(M1, numOfIters1);
+
+fprintf('Performing stochastic gradient descent ...\n');
+for i = 1 : numOfIters1
+    for j = 1 : size(trainingX1, 1)
+        dw1(:,i) = (trainingT1(j,1) - Phi1(j,:) * w01) * Phi1(j,:)';
+        w01 = w01 + eta1(1,i) * dw1(:,i);
+    end
+end
+
+
+% SGD
+% initial weights M X 1
+w02 = zeros(M2,1);
+
+% number of iterations for gradient descent - E
+numOfIters = 100;
+
+% learning rate 1 X E
+eta2 = 0.1 * ones(1, numOfIters);
+
+% gradients M X E
+dw2 = ones(M2, numOfIters);
+
+fprintf('Performing stochastic gradient descent ...\n');
+for i = 1 : numOfIters
+    for j = 1 : size(trainingX2, 1)
+        dw2(:,i) = (trainingT2(j,1) - Phi2(j,:) * w02) * Phi2(j,:)';
+        w02 = w02 + eta2(1,i) * dw2(:,i);
+    end
+end
 
 save('proj2.mat');
 end
