@@ -118,7 +118,7 @@ dw1 = ones(M1, numOfIters1);
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters1
     for j = 1 : n1
-        dw1(:,i) = eta1(1,i) * ((trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)' + lambda * w01);
+        dw1(:,i) = eta1(1,i) * ((trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)' + lambda1 * w01);
         w01 = w01 + dw1(:,i);
     end
 end
