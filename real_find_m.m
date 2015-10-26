@@ -83,11 +83,11 @@ for M1 = 1 : total
     
     % validation set
     phiValid1 = calculatePhi(validationX1, M1, Sigma1, mu1);
-    [errorVal1, ermsValidation1(1,M1)] = calculateError(phiValid1, validationT1, w1, size(validationX1, 1), lambda1);
+    [errorVal1, ermsValidation1(1,M1)] = calculateError(phiValid1, validationT1, w1, size(validationX1, 1), 0);
     
     % testing set
     phiTest1 = calculatePhi(testingX1, M1, Sigma1, mu1);
-    [errorTest1, ermsTest1(1,M1)] = calculateError(phiTest1, testingT1, w1, size(testingX1, 1), lambda1);
+    [errorTest1, ermsTest1(1,M1)] = calculateError(phiTest1, testingT1, w1, size(testingX1, 1), 0);
     
 end
 
