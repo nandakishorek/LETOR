@@ -45,7 +45,7 @@ for M1 = 1 : total
     
     % centres for the basis functions D X M
     % we assign centroids of the clusters to muj
-    mu1 = C1;
+    mu1 = C1';
     
     % spread for the Gaussian radial functions
     fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M1);
@@ -112,7 +112,7 @@ fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M);
 Phi = ones(n, M);
 for j = 2 : M
     for i = 1 : n
-        temp = X(i,:)' - mu(j);
+        temp = X(i,:)' - mu(:,j);
         siginv = inv(Sigma(:,:,j));
         Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
     end
