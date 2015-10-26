@@ -90,11 +90,11 @@ w1 = pinv((lambda1 * eye(M1)) + Phi1' * Phi1) * Phi1' * trainingT;
 
 % validation set
 phiValid = calculatePhi(validationX, M1, Sigma1, mu1);
-[errorVal1, validPer1] = calculateError(phiValid, validationT, w1, size(validationX, 1), lambda1)
+[errorVal1, validPer1] = calculateError(phiValid, validationT, w1, size(validationX, 1), 0)
 
 % testing set
 phiTest = calculatePhi(testingX, M1, Sigma1, mu1);
-[errorTest1, testPer2] = calculateError(phiTest, testingT, w1, size(testingX, 1), lambda1);
+[errorTest1, testPer2] = calculateError(phiTest, testingT, w1, size(testingX, 1), 0);
 
 figure(3)
 y2 = Phi1 * w1;
