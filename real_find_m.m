@@ -1,7 +1,7 @@
 %% Project 2 - Learning to Rank using Linear Regression
 %% Nandakishore Krishna
 %% Person number : 50169797
-function [] = synth_find_m()
+function [] = real_find_m()
 
 clear; close all; clc;
 
