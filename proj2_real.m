@@ -2,7 +2,7 @@ function [] = proj2_real()
 %% Project 2 - Learning to Rank using Linear Regression
 %% Nandakishore Krishna
 %% Person number : 50169797
-
+rng default %
 clear; close all; clc;
 
 UBitName = 'Nanda Kishore Krishna';

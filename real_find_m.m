@@ -3,6 +3,7 @@
 %% Person number : 50169797
 function [] = real_find_m()
 
+rng default %
 clear; close all; clc;
 
 UBitName = 'Nanda Kishore Krishna';

@@ -171,6 +171,8 @@ end
 
 function [Sigma, mu] = calculateSigmaMu(X, M)
 
+rng default % 
+
 n = size(X,1);
 d = size(X,2);
 
