@@ -2,7 +2,7 @@ function [] = proj2_synth()
 %% Project 2 - Learning to Rank using Linear Regression
 %% Nandakishore Krishna
 %% Person number : 50169797
-
+rng default %
 clear; close all; clc;
 
 UBitName = 'Nanda Kishore Krishna';
@@ -102,10 +102,10 @@ phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
 w02 = zeros(M2,1);
 
 % number of iterations for gradient descent - E
-numOfIters = 100;
+numOfIters = 500;
 
 % learning rate 1 X E
-eta2 = 0.1 * ones(1, numOfIters);
+eta2 = 1 * ones(1, numOfIters);
 
 % gradients M X E
 dw2 = ones(M2, numOfIters);
@@ -113,8 +113,10 @@ dw2 = ones(M2, numOfIters);
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters
     for j = 1 : n2
-        dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
-        w02 = w02 + eta2(1,i) * dw2(:,i);
+%         dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
+%         w02 = w02 + eta2(1,i) * dw2(:,i);
+        dw2(:,i) = eta2(1,i) * ((trainingT2(j,1) - w02' * phi2(j,:)') * phi2(j,:)' + lambda2 * w02);
+        w02 = w02 + dw2(:,i);
     end
 end
 
