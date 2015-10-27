@@ -41,7 +41,7 @@ d2 = size(trainingX2, 2);
 % histogram(trainingX2(:,2));
 
 % model complexity
-M2 = 91;
+M2 = 60;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M2);
@@ -81,33 +81,28 @@ phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 % regularization coefficient
 lambda2 = 0;
 
-% closed form solution for the weights
-fprintf('Finding the closed form solution ...\n');
-w2 = pinv((lambda2 * eye(M2)) + phi2' * phi2) * phi2' * trainingT2;
-
-total = size(validationX2,1)
+total = size(validationX2,1);
 ermsTraining = zeros(1,total);
 ermsValidation = zeros(1,total);
-ermsTest = zeros(1,total);
 
 phiValid = calculatePhi(validationX2, M2, Sigma2, mu2);
-phiTest = calculatePhi(testingX2, M2, Sigma2, mu2);
 
 for i = 1 : total
+    
+    % closed form solution for the weights
+    fprintf('Finding the closed form solution ...\n');
+    w2 = pinv((lambda2 * eye(M2)) + phi2(1:i,:)' * phi2(1:i,:)) * phi2(1:i,:)' * trainingT2(1:i,:);
+    
     % sum of squares error and erms for the training set
-    [errorTrain2, ermsTraining(1,i)] = calculateError(phi2(1:i,:), trainingT2(1:i,:), w2, i, lambda2);
+    [errorTrain2, ermsTraining(1,i)] = calculateError(phi2(1:i,:), trainingT2(1:i,:), w2, i, 0);
     
     % validation set
-    [errorVal2, ermsValidation(1,i)] = calculateError(phiValid(1:i,:), validationT2(1:i,:), w2, i, 0);
-    
-    % testing set
-    [errorTest2, ermsTest(1,i)] = calculateError(phiTest(1:i,:), testingT2(1:i,:), w2, i, 0);
+    [errorVal2, ermsValidation(1,i)] = calculateError(phiValid, validationT2, w2, size(phiValid, 1), 0);
 end
 
 figure(3)
-xaxis = linspace(1, size(validationX2,1), size(validationX2,1));
-plot(xaxis, ermsTraining, 'b', xaxis, ermsValidation, 'r', xaxis, ermsTest, 'g');
-legend('training','validation','testing')
+plot(1:total, ermsTraining, 'b', 1:total, ermsValidation, 'r');
+legend('training','validation')
 xlabel('N', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 
