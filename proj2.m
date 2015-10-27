@@ -104,19 +104,19 @@ phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2);
 w01 = zeros(M1,1);
 
 % number of iterations for gradient descent - E
-numOfIters1 = 100;
+numOfIters1 = 500;
 
 % learning rate 1 X E
-eta1 = 0.3 * ones(1, numOfIters1);
+eta1 = 1 * ones(1, numOfIters1);
 
 % gradients M X E
-dw1 = ones(M1, numOfIters1);
+dw1 = zeros(M1, numOfIters1);
 
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters1
     for j = 1 : size(trainingX1, 1)
-        dw1(:,i) = (trainingT1(j,1) - Phi1(j,:) * w01) * Phi1(j,:)';
-        w01 = w01 + eta1(1,i) * dw1(:,i);
+        dw1(:,i) = eta1(1,i) * ((trainingT1(j,1) - w01' * Phi1(j,:)') * Phi1(j,:)' + lambda1 * w01);
+        w01 = w01 + dw1(:,i);
     end
 end
 
@@ -126,10 +126,10 @@ end
 w02 = zeros(M2,1);
 
 % number of iterations for gradient descent - E
-numOfIters = 100;
+numOfIters = 500;
 
 % learning rate 1 X E
-eta2 = 0.1 * ones(1, numOfIters);
+eta2 = 1 * ones(1, numOfIters);
 
 % gradients M X E
 dw2 = ones(M2, numOfIters);
@@ -137,8 +137,10 @@ dw2 = ones(M2, numOfIters);
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters
     for j = 1 : size(trainingX2, 1)
-        dw2(:,i) = (trainingT2(j,1) - Phi2(j,:) * w02) * Phi2(j,:)';
-        w02 = w02 + eta2(1,i) * dw2(:,i);
+        %         dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
+        %         w02 = w02 + eta2(1,i) * dw2(:,i);
+        dw2(:,i) = eta2(1,i) * ((trainingT2(j,1) - w02' * Phi2(j,:)') * Phi2(j,:)' + lambda2 * w02);
+        w02 = w02 + dw2(:,i);
     end
 end
 
@@ -171,7 +173,7 @@ end
 
 function [Sigma, mu] = calculateSigmaMu(X, M)
 
-rng default % 
+rng default %
 
 n = size(X,1);
 d = size(X,2);
