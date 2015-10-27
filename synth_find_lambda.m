@@ -43,43 +43,46 @@ ermsTraining = zeros(1,total);
 ermsValidation = zeros(1,total);
 ermsTest = zeros(1,total);
 
-M2 = 60;
+M2 = 81;
+
+rng default %
+
+% find the clusters for the datapoints
+fprintf('Finding %d clusters ...\n', M2);
+[idx2, C2] = kmeans(trainingX2, M2);
+
+% centres for the basis functions D X M
+% we assign centroids of the clusters to muj
+mu2 = C2';
+
+% spread for the Gaussian radial functions
+fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
+
+cluster_variance = zeros(M2,d2);
+for i = 1 : M2
+    temp = [];
+    for j = 1 : length(idx2)
+        if j == i
+            temp = [temp; trainingX2(j,:)];
+        end
+    end
+    cluster_variance(i,:) = var(temp);
+    %     cluster_variance(i,:) = 1 * ones(1, d2);
+    %     cluster_variance(i,1) = 0.5;
+end
+
+% the sigmaj for the basis functions
+Sigma2 = zeros(d2,d2,M2);
+for j = 2 : M2
+    for i = 1 : n2
+        Sigma2(:,:,j) = diag(cluster_variance(j,:));
+    end
+end
+
+
+phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
 for k = 1 : total
-    % find the clusters for the datapoints
-    fprintf('Finding %d clusters ...\n', M2);
-    [idx2, C2] = kmeans(trainingX2, M2);
-    
-    % centres for the basis functions D X M
-    % we assign centroids of the clusters to muj
-    mu2 = C2';
-    
-    % spread for the Gaussian radial functions
-    fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M2);
-    
-    cluster_variance = zeros(M2,d2);
-    for i = 1 : M2
-        temp = [];
-        for j = 1 : length(idx2)
-            if j == i
-                temp = [temp; trainingX2(j,:)];
-            end
-        end
-        cluster_variance(i,:) = var(temp);
-        %     cluster_variance(i,:) = 1 * ones(1, d2);
-        %     cluster_variance(i,1) = 0.5;
-    end
-    
-    % the sigmaj for the basis functions
-    Sigma2 = zeros(d2,d2,M2);
-    for j = 2 : M2
-        for i = 1 : n2
-            Sigma2(:,:,j) = diag(cluster_variance(j,:));
-        end
-    end
-    
-    
-    phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
     
     % closed form solution for the weights
     fprintf('Finding the closed form solution ...\n');
@@ -100,8 +103,8 @@ end
 
 % plot M vs ERMS
 figure(2)
-plot(lambda2, ermsTraining, 'b', lambda2, ermsValidation, 'r', lambda2, ermsTest, 'g');
-legend('training','validation','testing');
+plot(lambda2, ermsTraining, 'b', lambda2, ermsValidation, 'r');
+legend('training','validation');
 xlabel('lambda', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 
