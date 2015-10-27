@@ -77,6 +77,9 @@ end
 
 
 Phi1 = calculatePhi(trainingX, M1, Sigma1, mu1);
+phiValid = calculatePhi(validationX, M1, Sigma1, mu1);
+phiTest = calculatePhi(testingX, M1, Sigma1, mu1);
+
 for k = 1 : total
     % closed form solution for the weights
     fprintf('Finding the closed form solution ...\n');
@@ -86,11 +89,9 @@ for k = 1 : total
     [errorTrain1, ermsTraining(1,k)] = calculateError(Phi1, trainingT, w1, size(trainingX, 1), lambda1(k,1));
     
     % validation set
-    phiValid = calculatePhi(validationX, M1, Sigma1, mu1);
     [errorVal1, ermsValidation(1,k)] = calculateError(phiValid, validationT, w1, size(validationX, 1), 0);
     
     % testing set
-    phiTest = calculatePhi(testingX, M1, Sigma1, mu1);
     [errorTest1, ermsTest(1,k)] = calculateError(phiTest, testingT, w1, size(testingX, 1), 0);
     
 end
