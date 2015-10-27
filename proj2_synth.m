@@ -41,7 +41,7 @@ d2 = size(trainingX2, 2);
 % histogram(trainingX2(:,2));
 
 % model complexity
-M2 = 60;
+M2 = 81;
 
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M2);
