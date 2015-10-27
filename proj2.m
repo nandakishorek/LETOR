@@ -57,7 +57,7 @@ testInd2 = testInd2';
 
 % model complexity
 M1 = 26;
-M2 = 60;
+M2 = 81;
 
 % calculate sigma for both the datasets
 [Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
@@ -104,7 +104,7 @@ phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2);
 w01 = zeros(M1,1);
 
 % number of iterations for gradient descent - E
-numOfIters1 = 500;
+numOfIters1 = 1000;
 
 % learning rate 1 X E
 eta1 = 1 * ones(1, numOfIters1);
@@ -126,7 +126,7 @@ end
 w02 = zeros(M2,1);
 
 % number of iterations for gradient descent - E
-numOfIters = 500;
+numOfIters = 1000;
 
 % learning rate 1 X E
 eta2 = 1 * ones(1, numOfIters);
