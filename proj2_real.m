@@ -79,7 +79,7 @@ end
 Phi1 = calculatePhi(trainingX, M1, Sigma1, mu1);
 
 % regularization coefficient
-lambda1 = 0.2;
+lambda1 = 0;
 
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
@@ -110,15 +110,15 @@ w01 = zeros(M1,1);
 numOfIters1 = 100;
 
 % learning rate 1 X E
-eta1 = 0.1 * ones(1, numOfIters1);
+eta1 = 1 * ones(1, numOfIters1);
 
 % gradients M X E
-dw1 = ones(M1, numOfIters1);
+dw1 = zeros(M1, numOfIters1);
 
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters1
     for j = 1 : n1
-        dw1(:,i) = eta1(1,i) * ((trainingT(j,1) - Phi1(j,:) * w01) * Phi1(j,:)' + lambda1 * w01);
+        dw1(:,i) = eta1(1,i) * ((trainingT(j,1) - w01' * Phi1(j,:)') * Phi1(j,:)' + lambda1 * w01);
         w01 = w01 + dw1(:,i);
     end
 end
