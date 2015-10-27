@@ -113,8 +113,6 @@ dw2 = ones(M2, numOfIters);
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters
     for j = 1 : n2
-%         dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
-%         w02 = w02 + eta2(1,i) * dw2(:,i);
         dw2(:,i) = eta2(1,i) * ((trainingT2(j,1) - w02' * phi2(j,:)') * phi2(j,:)' + lambda2 * w02);
         w02 = w02 + dw2(:,i);
     end
