@@ -97,8 +97,8 @@ end
 
 % plot M vs ERMS
 figure(2)
-plot(lambda1, ermsTraining, 'b', lambda1, ermsValidation, 'r', lambda1, ermsTest, 'g');
-legend('training','validation','testing');
+plot(lambda1, ermsTraining, 'b', lambda1, ermsValidation, 'r', lambda1);
+legend('training','validation');
 xlabel('lambda', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 

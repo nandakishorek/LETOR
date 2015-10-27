@@ -97,8 +97,8 @@ end
 % plot M vs ERMS
 figure(10)
 xaxis = linspace(0, total - 1, total);
-plot(xaxis, ermsTraining1, 'b', xaxis, ermsValidation1, 'r', xaxis, ermsTest1, 'g');
-legend('training','validation','testing')
+plot(xaxis, ermsTraining1, 'b', xaxis, ermsValidation1, 'r');
+legend('training','validation')
 xlabel('M', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 
