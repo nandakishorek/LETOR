@@ -41,6 +41,9 @@ ermsValidation = zeros(1,total);
 ermsTest = zeros(1,total);
 
 for M2 = 1 : total
+    
+    rng default %
+    
     % find the clusters for the datapoints
     fprintf('Finding %d clusters ...\n', M2);
     [idx2, C2] = kmeans(trainingX2, M2);
@@ -99,8 +102,8 @@ end
 % plot M vs ERMS
 figure(2)
 xaxis = linspace(0, total - 1, total);
-plot(xaxis, ermsTraining, 'b', xaxis, ermsValidation, 'r', xaxis, ermsTest, 'g');
-legend('training','validation','testing')
+plot(xaxis, ermsTraining, 'b', xaxis, ermsValidation, 'r');
+legend('training','validation')
 xlabel('M', 'Color','r');
 ylabel('ERMS', 'Color', 'r');
 
