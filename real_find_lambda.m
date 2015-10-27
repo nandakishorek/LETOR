@@ -42,7 +42,7 @@ ermsTest = zeros(1,total);
 
 M1 = 26;
 
-
+rng default %
 % find the clusters for the datapoints
 fprintf('Finding %d clusters ...\n', M1);
 [idx1, C1] = kmeans(trainingX, M1);
