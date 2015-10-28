@@ -60,8 +60,8 @@ M1 = 26;
 M2 = 81;
 
 % calculate sigma for both the datasets
-[Sigma1, mu1] = calculateSigmaMu(trainingX1, M1);
-[Sigma2, mu2] = calculateSigmaMu(trainingX2, M2);
+[Sigma1, mu1] = calculateSigmaMuReal(trainingX1, M1);
+[Sigma2, mu2] = calculateSigmaMuSynth(trainingX2, M2);
 
 % calculate phi for both the datasets
 Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1);
@@ -175,7 +175,47 @@ err = sum((t - (phi * w)) .^ 2) / 2 + (lambda * (w' * w) / 2);
 erms = sqrt(2 * err / n);
 end
 
-function [Sigma, mu] = calculateSigmaMu(X, M)
+function [Sigma, mu] = calculateSigmaMuReal(X, M)
+
+rng default %
+
+n = size(X,1);
+d = size(X,2);
+
+% find the clusters for the datapoints
+fprintf('Finding %d clusters ...\n', M);
+[idx, C] = kmeans(X, M);
+
+% centres for the basis functions D X M
+% we assign centroids of the clusters to muj
+mu = C';
+
+% mu = datasample(X, M);
+
+% spread for the Gaussian radial functions
+fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
+
+cluster_variance = zeros(M,d);
+for i = 1 : M
+    temp = [];
+    for j = 1 : length(idx)
+        if j == i
+            temp = [temp; X(j,:)];
+        end
+    end
+    cluster_variance(i,:) = var(temp);
+end
+
+% the sigmaj for the basis functions
+Sigma = zeros(d,d,M);
+for j = 2 : M
+    for i = 1 : n
+        Sigma(:,:,j) = diag(cluster_variance(j,:));
+    end
+end
+end
+
+function [Sigma, mu] = calculateSigmaMuSynth(X, M)
 
 rng default %
 
