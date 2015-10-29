@@ -56,7 +56,7 @@ testInd2 = 1801:size(x,1);
 testInd2 = testInd2';
 
 % model complexity
-M1 = 26;
+M1 = 18;
 M2 = 81;
 
 % calculate sigma for both the datasets
@@ -68,13 +68,13 @@ Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1);
 Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
 % regularization coefficients
-lambda1 = 0;
+lambda1 = 0.01;
 lambda2 = 0;
 
 % closed form solution for the weights
 fprintf('Finding the closed form solution ...\n');
-w1 = pinv((lambda1 * eye(M1)) + Phi1' * Phi1) * Phi1' * trainingT1;
-w2 = pinv((lambda2 * eye(M2)) + Phi2' * Phi2) * Phi2' * trainingT2;
+w1 = ((lambda1 * eye(M1)) + Phi1' * Phi1) \ Phi1' * trainingT1;
+w2 = ((lambda2 * eye(M2)) + Phi2' * Phi2) \ Phi2' * trainingT2;
 
 % training error
 [errorTrain1, trainPer1] = calculateError(Phi1, trainingT1, w1, size(trainingX1, 1), lambda1)
@@ -107,25 +107,29 @@ w01 = zeros(M1,1);
 numOfIters1 = 55700;
 
 % learning rate 1 X E
-eta1 = 1 * ones(1, numOfIters1);
+eta1 = 2 * ones(1, numOfIters1);
 
 % gradients M X E
 dw1 = zeros(M1, numOfIters1);
 
 fprintf('Performing stochastic gradient descent ...\n');
+prevError = 1;
 for i = 1 : numOfIters1
-    %     for j = 1 : size(trainingX1, 1)
-    %         dw1(:,i) = eta1(1,i) * ((trainingT1(j,1) - w01' * Phi1(j,:)') * Phi1(j,:)' + lambda1 * w01);
-    %         w01 = w01 + dw1(:,i);
-    %     end
-    w1(:,i) = eta1(1,i) * ((trainingT1(i,1) - w01' * Phi1(i,:)') * Phi1(i,:)' + lambda1 * w01);
+    dw1(:,i) = eta1(1,i) * ((trainingT1(i,1) - w01' * Phi1(i,:)') * Phi1(i,:)');
     w01 = w01 + dw1(:,i);
+    [sgderr, sgdErms] = calculateError(Phi1(i,:), trainingT1(i,1), w01, 1, 0);
+    if (sgdErms - prevError) > 0.0001
+        eta1(1,i+1) = eta1(1,i) / 2;
+    else
+        eta1(1,i+1) = eta1(1,i);
+    end
+    prevError = sgdErms;
 end
 
 
 % SGD
 % initial weights M X 1
-w02 = zeros(M2,1);
+w02 = rand(M2,1);
 
 % number of iterations for gradient descent - E
 numOfIters = 1600;
@@ -138,13 +142,7 @@ dw2 = ones(M2, numOfIters);
 
 fprintf('Performing stochastic gradient descent ...\n');
 for i = 1 : numOfIters
-    %     for j = 1 : size(trainingX2, 1)
-    %         %         dw2(:,i) = (trainingT2(j,1) - phi2(j,:) * w02) * phi2(j,:)';
-    %         %         w02 = w02 + eta2(1,i) * dw2(:,i);
-    %         dw2(:,i) = eta2(1,i) * ((trainingT2(j,1) - w02' * Phi2(j,:)') * Phi2(j,:)' + lambda2 * w02);
-    %         w02 = w02 + dw2(:,i);
-    %     end
-    dw2(:,i) = eta2(1,i) * ((trainingT2(i,1) - w02' * Phi2(i,:)') * Phi2(i,:)' + lambda2 * w02);
+    dw2(:,i) = eta2(1,i) * ((trainingT2(i,1) - w02' * Phi2(i,:)') * Phi2(i,:)');
     w02 = w02 + dw2(:,i);
 end
 
@@ -160,10 +158,9 @@ n = size(X, 1);
 fprintf('Calculating the design matrix phi of size %d X %d ...\n', n, M);
 Phi = ones(n, M);
 for j = 2 : M
-    siginv = inv(Sigma(:,:,j));
     for i = 1 : n
         temp = X(i,:)' - mu(:,j);
-        Phi(i,j) = exp(-1 * (temp' * siginv * temp) / 2);
+        Phi(i,j) = exp(-1 * (temp' / Sigma(:,:,j) * temp) / 2);
     end
 end
 end
@@ -177,80 +174,49 @@ end
 
 function [Sigma, mu] = calculateSigmaMuReal(X, M)
 
-rng default %
-
-n = size(X,1);
 d = size(X,2);
 
 % find the clusters for the datapoints
-fprintf('Finding %d clusters ...\n', M);
-[idx, C] = kmeans(X, M);
+fprintf('Finding %d clusters ...\n', M-1);
+rng default %
+[idx, C] = kmeans(X, M-1, 'MaxIter',1000);
 
 % centres for the basis functions D X M
 % we assign centroids of the clusters to muj
 mu = C';
-
-% mu = datasample(X, M);
+mu = [zeros(d,1) mu];
 
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
 
-cluster_variance = zeros(M,d);
-for i = 1 : M
-    temp = [];
-    for j = 1 : length(idx)
-        if j == i
-            temp = [temp; X(j,:)];
-        end
-    end
-    cluster_variance(i,:) = var(temp);
-end
-
 % the sigmaj for the basis functions
 Sigma = zeros(d,d,M);
-for j = 2 : M
-    for i = 1 : n
-        Sigma(:,:,j) = diag(cluster_variance(j,:));
-    end
+for j = 1 : M
+    Sigma(:,:,j) = 0.1 * eye(d);
 end
 end
 
 function [Sigma, mu] = calculateSigmaMuSynth(X, M)
 
-rng default %
-
-n = size(X,1);
 d = size(X,2);
 
 % find the clusters for the datapoints
-fprintf('Finding %d clusters ...\n', M);
-[idx, C] = kmeans(X, M);
+rng default %
+fprintf('Finding %d clusters ...\n', M-1);
+[idx, C] = kmeans(X, M-1);
 
 % centres for the basis functions D X M
 % we assign centroids of the clusters to muj
 mu = C';
-
-% mu = datasample(X, M);
+mu = [zeros(d,1) mu];
 
 % spread for the Gaussian radial functions
 fprintf('Calculating the spread for the %d Gaussian radial functions ...\n', M);
 
-cluster_variance = zeros(M,d);
-for i = 1 : M
-    temp = [];
-    for j = 1 : length(idx)
-        if j == i
-            temp = [temp; X(j,:)];
-        end
-    end
-    cluster_variance(i,:) = var(temp);
-end
-
+variance = var(X);
 % the sigmaj for the basis functions
 Sigma = zeros(d,d,M);
-for j = 2 : M
-    for i = 1 : n
-        Sigma(:,:,j) = diag(cluster_variance(j,:));
-    end
+for j = 1 : M
+    Sigma(:,:,j) = diag(variance);
 end
 end
