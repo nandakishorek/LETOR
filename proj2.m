@@ -57,7 +57,7 @@ testInd2 = testInd2';
 
 % model complexity
 M1 = 18;
-M2 = 81;
+M2 = 40;
 
 % calculate sigma for both the datasets
 [Sigma1, mu1] = calculateSigmaMuReal(trainingX1, M1);
@@ -68,7 +68,7 @@ Phi1 = calculatePhi(trainingX1, M1, Sigma1, mu1);
 Phi2 = calculatePhi(trainingX2, M2, Sigma2, mu2);
 
 % regularization coefficients
-lambda1 = 0.01;
+lambda1 = 0;
 lambda2 = 0;
 
 % closed form solution for the weights
@@ -100,53 +100,56 @@ phiTest2 = calculatePhi(testingX2, M2, Sigma2, mu2);
 
 
 % SGD
-% initial weights M X 1
-w01 = zeros(M1,1);
-
 % number of iterations for gradient descent - E
 numOfIters1 = 55700;
 
+% initial weights M X 1
+w01 = zeros(M1, 1);
+
 % learning rate 1 X E
-eta1 = 2 * ones(1, numOfIters1);
+eta1 = 0.2 * ones(1, numOfIters1);
 
 % gradients M X E
 dw1 = zeros(M1, numOfIters1);
 
 fprintf('Performing stochastic gradient descent ...\n');
-prevError = 1;
+tempW01 = w01;
 for i = 1 : numOfIters1
-    dw1(:,i) = eta1(1,i) * ((trainingT1(i,1) - w01' * Phi1(i,:)') * Phi1(i,:)');
-    w01 = w01 + dw1(:,i);
-    [sgderr, sgdErms] = calculateError(Phi1(i,:), trainingT1(i,1), w01, 1, 0);
+    dw1(:,i) = eta1(1,i) * ((trainingT1(i,1) - tempW01' * Phi1(i,:)') * Phi1(i,:)' + lambda1 * tempW01);
+    tempW01 = tempW01 + dw1(:,i);
+end
+
+norm(w1-tempW01)/norm(w1)
+
+% SGD
+% number of iterations for gradient descent - E
+numOfIters2 = 1600;
+
+% initial weights M X 1
+w02 = zeros(M2,1);
+
+% learning rate 1 X E
+eta2 = 0.1 * ones(1, numOfIters2);
+
+% gradients M X E
+dw2 = ones(M2, numOfIters2);
+
+fprintf('Performing stochastic gradient descent ...\n');
+tempW02 = w02;
+prevError = 1;
+for i = 1 : numOfIters2
+    dw2(:,i) = eta2(1,i) * ((trainingT2(i,1) - tempW02' * Phi2(i,:)') * Phi2(i,:)' + lambda2 * tempW02);
+    tempW02 = tempW02 + dw2(:,i);
+    [sgdErr, sgdErms] = calculateError(Phi2(i,:), trainingT2(i,1), tempW02, 1, lambda1);
     if (sgdErms - prevError) > 0.0001
-        eta1(1,i+1) = eta1(1,i) / 2;
-    else
-        eta1(1,i+1) = eta1(1,i);
+        eta2(1,i+1) = eta2(1,i) / 2;
+        tempW02 = tempW02 - dw2(:,i);
     end
     prevError = sgdErms;
 end
+norm(w2-tempW02) / norm(w2)
 
-
-% SGD
-% initial weights M X 1
-w02 = rand(M2,1);
-
-% number of iterations for gradient descent - E
-numOfIters = 1600;
-
-% learning rate 1 X E
-eta2 = 1 * ones(1, numOfIters);
-
-% gradients M X E
-dw2 = ones(M2, numOfIters);
-
-fprintf('Performing stochastic gradient descent ...\n');
-for i = 1 : numOfIters
-    dw2(:,i) = eta2(1,i) * ((trainingT2(i,1) - w02' * Phi2(i,:)') * Phi2(i,:)');
-    w02 = w02 + dw2(:,i);
-end
-
-save('proj2.mat');
+save('proj2.mat', 'M1', 'M2', 'mu1', 'mu2', 'Sigma1', 'Sigma2', 'lambda1', 'lambda2', 'trainInd1', 'trainInd2', 'validInd1', 'validInd2', 'w1', 'w2', 'w01', 'w02', 'dw1', 'dw2', 'eta1', 'eta2', 'trainPer1', 'trainPer2', 'validPer1', 'validPer2');
 end
 
 
